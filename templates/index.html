@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Attention App</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body>
+    <main class="container-fluid table-bg">
+      <section class="d-flex justify-content-around p-3">
+        <h2 class="text-center">App Atención al Cliente</h2>
+        <button
+          class="btn btn-primary mx-2"
+          data-toggle="modal"
+          data-target="#myModal"
+          data-placement="top"
+          title="Crear Nuevo Registro"
+        >
+          Crear registro
+        </button>
+      </section>
+
+      <!-- MODAL REGISTRAR -->
+      <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title text-primary text-center fs-2 fw-bold">Crear nuevo registro</h5>
+              <button type="button" class="close closed" data-dismiss="modal" aria-label="close">
+                <span aria-hidden="true"><i class="bi bi-x-square-fill"></i></span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <form action="{{ url_for('attention_control_bp.insert')}}" method="POST">
+                <!--=== FECHA ===-->
+                <div class="form-group">
+                  <label class="label" for="registro_fecha">Fecha registro</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="registro_fecha"
+                    name="fecha"
+                    placeholder="Fecha"
+                    required
+                  />
+                </div>
+                <!--=== NOMBRES ===-->
+                <div class="form-group">
+                  <label class="label" for="registro_nombre">Nombre Completo</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="registro_nombre"
+                    name="nombres"
+                    placeholder="Ingrese nombre completo"
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="form-inline">
+                  <!--=== HORA INGRESO ===-->
+                  <div class="form-group">
+                    <label class="label" for="registro_hora_ingreso">Hora ingreso</label>
+                    <input
+                      type="time"
+                      class="form-control"
+                      id="registro_hora_ingreso"
+                      name="hora_ingreso"
+                      required
+                    />
+                  </div>
+
+                  <!--=== HORA SALIDA ===-->
+                  <div class="form-group">
+                    <label class="label" for="registro_hora_salida">Hora salida</label>
+                    <input
+                      type="time"
+                      class="form-control"
+                      id="registro_hora_salida"
+                      name="hora_salida"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="form-container">
+                  <div class="form-check">
+                        <input
+                          type="checkbox"
+                          name="polo_gift"
+                          id= "registro_polo_gift"
+                          class="form-check-input"
+                          />
+                          <label class="form-check-label mx-2" for="registro_polo_gift">Polo Regalo</label>
+                  </div>
+                  <div class="form-check">
+                        <input
+                          type="checkbox"
+                          name="keychain_gift"
+                          id= "registro_keychain_gift"
+                          class="form-check-input"
+                          />
+                          <label class="form-check-label mx-2" for="registro_keychain_gift">Llavero Regalo</label>
+                  </div>
+
+                  <div class="form-catalogo">
+                    
+                    <label class="label">Catalogo</label>
+                    <div class="form-group-2">
+                      <label>
+                        <input
+                          type="radio"
+                          name="catalog_book"
+                          value="Si"
+                          checked
+                        />
+                        Entregado
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="catalog_book"
+                          value="No"
+                        />
+                        No entregado
+                        </label>
+                      </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Registrar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+         <!-- END MODAL REGISTRAR-->
+
+        <div class="row justify-content-center">
+          <div class="col-md-8>
+          <div class="table-responsive">
+            <table
+              class="table table-bordered table-striped table-hover table-sm text-center"
+            >
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Fecha</th>
+                  <th>Nombres</th>
+                  <th>Hora Ingreso</th>
+                  <th>Hora Salida</th>
+                  <th>Polo</th>
+                  <th>Llavero</th>
+                  <th>Catálogo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in attentions %}
+                <tr>
+                  <td>{{ row.id }}</td>
+                  <td>{{ row.fecha }}</td>
+                  <td>{{ row.nombres }}</td>
+                  <td>{{ row.hora_ingreso }}</td>
+                  <td>{{ row.hora_salida }}</td>
+                  <td>{{ row.polo_gift }}</td>
+                  <td>{{ row.keychain_gift }}</td>
+                  <td>{{ row.catalog_book }}</td>
+                  <td>
+                    <a
+                      href="/update/{{ row.id }}"
+                      class="btn btn-warning btn-sm"
+                      data-toggle="modal"
+                      data-target="#modaledit{{ row.id }}"
+                      type="button"
+                      tooltip="Actualizar Registro"
+                    >
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <a
+                      href="/delete/{{ row.id }}"
+                      onclick="return confirm('Seguro que desea eliminar el registro?')"
+                      class="btn btn-danger btn-sm"
+                      ><i class="bi bi-trash3-fill"></i></a
+                    >
+                  </td>
+                </tr>
+
+
+      <!-- MODAL EDITAR -->
+      <div id="modaledit{{row.id}}" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header-edit">
+              <h5 class="modal-title text-primary text-center fs-2 fw-bold">Actualizar registro</h5>
+              <button type="button" class="close closed" data-dismiss="modal" aria-label="close">
+                <span aria-hidden="true"><i class="bi bi-x-square-fill"></i></span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <form action="{{ url_for('attention_control_bp.update')}}" method="POST">
+                <input type="hidden" name="id" value="{{ row.id }}"/>
+                <!--=== FECHA ===-->
+                <div class="form-group">
+                  <label class="label" for="actualizar_fecha">Fecha registro</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="actualizar_fecha"
+                    name="fecha"
+                    placeholder="Fecha"
+                    value="{{ row.fecha.strftime('%Y-%m-%d') }}"
+                    required
+                  />
+                </div>
+                <!--=== NOMBRES ===-->
+                <div class="form-group">
+                  <label class="label" for="actualizar_nombre">Nombre Completo</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="actualizar_nombre"
+                    name="nombres"
+                    value="{{ row.nombres }}"
+                    placeholder="Ingrese nombre completo"
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="form-inline">
+                  <!--=== HORA INGRESO ===-->
+                  <div class="form-group">
+                    <label class="label" for="actualizar__hora_ingreso">Hora ingreso</label>
+                    <input
+                      type="time"
+                      class="form-control"
+                      value="{{ row.hora_ingreso }}"
+                      id="actualizar_hora_ingreso"
+                      name="hora_ingreso"
+                      required
+                    />
+                  </div>
+
+                  <!--=== HORA SALIDA ===-->
+                  <div class="form-group">
+                    <label class="label" for="actualizar_hora_salida">Hora salida</label>
+                    <input
+                      type="time"
+                      class="form-control"
+                      value="{{ row.hora_salida }}"
+                      id="actualizar_hora_salida"
+                      name="hora_salida"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="form-container">
+                  <div class="form-check">
+                        <input
+                          type="checkbox"
+                          name="polo_gift"
+                          id= "actualizar_polo_gift"
+                          class="form-check-input"
+                          {% if row.polo_gift %} checked {% endif %}
+                          />
+                          <label class="form-check-label mx-2" for="actualizar_polo_gift">Polo Regalo</label>
+                  </div>
+                  <div class="form-check">
+                        <input
+                          type="checkbox"
+                          name="keychain_gift"
+                          id= "actualizar_keychain_gift"
+                          class="form-check-input"
+                          {% if row.keychain_gift %} checked {% endif %}
+                          />
+                          <label class="form-check-label mx-2" for="actualizar_keychain_gift">Llavero Regalo</label>
+                  </div>
+
+                  <div class="form-catalogo">
+                    
+                    <label class="label">Catalogo</label>
+                    <div class="form-group-2">
+                      <label>
+                        <input
+                          type="radio"
+                          name="catalog_book"
+                          value="Si"
+                          {% if row.catalog_book == 'Si' %} checked {% endif %}
+                        />
+                        Entregado
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="catalog_book"
+                          value="No"
+                          {% if row.catalog_book == 'No' %} checked {% endif %}
+                        />
+                        No entregado
+                        </label>
+                      </div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-warning">Actualizar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+         <!-- END MODAL EDITAR-->
+
+                {% endfor %}
+              </tbody>
+            </table>
+            {{ pagination.links }}
+          </div>
+        </div>
+      </div>
+    </main>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
