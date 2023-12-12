@@ -2,13 +2,15 @@ from flask import Flask
 from config import config
 from scr.route import route_attention_control
 
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(config['development'])  # configuracion del proyecto
 
-app = Flask(__name__) #instancia de flask
+    # Blueprint
+    app.register_blueprint(route_attention_control.main, url_prefix='/')  # registrar el blueprint
 
-#configuracion del proyecto (FLASK)
+    return app
 
 if __name__ == '__main__':
-    app.config.from_object(config['development']) #configuracion del proyecto
-    #Blueprint
-    app.register_blueprint(route_attention_control.main, url_prefix='/') #registrar el blueprint
-    app.run() #ejecutar el servidor
+    app = create_app()
+    app.run()
